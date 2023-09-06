@@ -22,3 +22,15 @@ if [[ $file_count == 1 ]]; then
 else
 	echo "Found $file_count blend files"
 fi
+
+finished_rendering=false
+while [[ $finished_rendering != true ]]; do
+	echo "Starting loop"
+	for project_file in "$project_folder"/*.blend; do
+		project_file=$(basename -- "$project_file") # Name of project file without path leading to it (has extension still)
+		echo "Now rendering $project_file"
+		project_file_no_ext=${project_file%.blend} # Name of project file without extension
+		output_folder="$project_folder/Blender Renders/$project_file_no_ext"
+		mkdir "$output_folder" -p
+	done
+done
