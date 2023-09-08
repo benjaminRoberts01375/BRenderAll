@@ -2,37 +2,25 @@
 
 # Get a directory to folder of Blend files
 USAGE="Usage: $0 [Path to directory]"
-output_dir=""
-blender_options=""
+output_dir="empty"
+blender_options="empty"
+project_folder=""
 
-while getopts ":o:b:" opt; do
-	case $opt in
-		o)
-			output_dir=$OPTARG
-			;;
-		b)
-			blender_options=$OPTARG
-			;;
-		\?)
-			echo "Invalid option: -$OPTARG" >&2
-			exit 1
-			;;
-		:)
-			echo "Option -$OPTARG requires an argument." >&2
-			exit 1
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		*)
+			if [[ -d $1 ]]; then
+				project_folder=$(realpath "$1")
+			else
+				echo "Invalid argument $1"
+				exit 1
+			fi
+			shift
 			;;
 	esac
 done
 
-if [ $# -ne 1 ]; then
-	echo "Incorrect argument count"
-	echo $USAGE
-	exit 1
-elif [[ ! -d $1 ]]; then
-	echo "Provided path is not a directory"
-	echo $USAGE
-	exit 1
-fi
+echo "project folder: "$project_folder""
 
 project_folder="$1" # A funner name
 blender_executable="/home/benroberts/Desktop/blender-4.0.0-alpha+main.d45f47a809dd-linux.x86_64-release/blender" # Useful to specify a particular blender installation
@@ -44,11 +32,6 @@ if [[ $file_count == 1 ]]; then
 else
 	echo "Found $file_count blend files"
 fi
-
-echo "Current Dir: $(pwd)"
-echo "Project folder: $project_folder"
-project_folder=$(realpath "$project_folder")
-echo "Project folder: $project_folder"
 
 finished_rendering=false
 #while [[ $finished_rendering != true ]]; do
