@@ -1,14 +1,38 @@
 #!/bin/bash
 
-# Get a directory to folder of Blend files
-USAGE="Usage: $0 [Path to directory]"
-output_dir="empty"
+output_dir=""
 blender_options="empty"
 project_folder=""
 
-while [[ $# -gt 0 ]]; do
+while (($#)); do
 	case $1 in
-		*)
+		-o)
+			if [[ -d "$2" ]]; then
+				output_dir="$1"
+				shift
+				shift
+			else
+				while true; do
+					read -p "Are you sure you want to create the directory \""$2"\"? [Y/n]" response
+					case $response in
+						[Yy]*|"" )
+							output_dir="$2"
+							mkdir "$2" -p
+							shift
+							shift
+							break
+							;;
+						[Nn]* )
+							exit 0
+							;;
+						* )
+							echo "Huh?"
+							;;
+					esac
+				done
+			fi
+			;;
+		* )
 			if [[ -d $1 ]]; then
 				project_folder=$(realpath "$1")
 			else
@@ -20,9 +44,6 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-echo "project folder: "$project_folder""
-
-project_folder="$1" # A funner name
 blender_executable="/home/benroberts/Desktop/blender-4.0.0-alpha+main.d45f47a809dd-linux.x86_64-release/blender" # Useful to specify a particular blender installation
 
 # Declare how many were found
@@ -42,7 +63,6 @@ finished_rendering=false
 		project_file_no_ext=${project_file%.blend} # Name of project file without extension
 		output_folder="$project_folder/Blender Renders/$project_file_no_ext"
 		find "$output_folder" -type f -size 0 -exec rm {} ';'
-		mkdir "$output_folder" -p # Folder to render into
-		$blender_executable -b "$project_file_path" -o "$output_folder/$project_namme_no_ext" -a
+		"$blender_executable" -b "$project_file_path" -o "$output_folder/$project_namme_no_ext" -a
 	done
 #done
