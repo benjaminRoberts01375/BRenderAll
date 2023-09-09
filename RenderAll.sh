@@ -7,6 +7,10 @@ project_folder=""
 while (($#)); do
 	case $1 in
 		-o)
+			if [[ $2 == "" ]]; then
+				echo "You must provide an output path with the -o flag."
+				exit 1
+			fi
 			absolute_dir=$(realpath "$2")
 			if [[ -d "$absolute_dir" ]]; then
 				output_dir="$absolute_dir"
@@ -44,6 +48,12 @@ while (($#)); do
 			;;
 	esac
 done
+
+# Check if an input was provided
+if [ $project_folder -z "" ]; then
+	echo "Usage $0 <Input directory> [flags]"
+	exit 1
+fi
 
 blender_executable="/home/benroberts/Desktop/blender-4.0.0-alpha+main.d45f47a809dd-linux.x86_64-release/blender" # Useful to specify a particular blender installation
 echo "$output_dir"
