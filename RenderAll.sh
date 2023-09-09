@@ -7,17 +7,18 @@ project_folder=""
 while (($#)); do
 	case $1 in
 		-o)
-			if [[ -d "$2" ]]; then
-				output_dir="$1"
+			absolute_dir=$(realpath "$2")
+			if [[ -d "$absolute_dir" ]]; then
+				output_dir="$absolute_dir"
 				shift
 				shift
 			else
 				while true; do
-					read -p "Are you sure you want to create the directory \""$2"\"? [Y/n]" response
+					read -p "Are you sure you want to create the directory \""$absolute_dir"\"? [Y/n] " response
 					case $response in
 						[Yy]*|"" )
-							output_dir="$2"
-							mkdir "$2" -p
+							output_dir="$absolute_dir"
+							mkdir "$absolute_dir" -p
 							shift
 							shift
 							break
@@ -36,7 +37,7 @@ while (($#)); do
 			if [[ -d $1 ]]; then
 				project_folder=$(realpath "$1")
 			else
-				echo "Invalid argument $1"
+				echo "Invalid argument: $1"
 				exit 1
 			fi
 			shift
@@ -45,6 +46,7 @@ while (($#)); do
 done
 
 blender_executable="/home/benroberts/Desktop/blender-4.0.0-alpha+main.d45f47a809dd-linux.x86_64-release/blender" # Useful to specify a particular blender installation
+echo "$output_dir"
 
 # Declare how many were found
 file_count=$(find $project_folder -maxdepth 1 -type f -name "*.blend" | wc -l)
