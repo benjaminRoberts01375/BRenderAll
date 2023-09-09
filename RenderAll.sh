@@ -1,11 +1,25 @@
 #!/bin/bash
 
 output_dir=""
-blender_options="empty"
+blender_options=""
 project_folder=""
 
 while (($#)); do
 	case $1 in
+		-a)
+			blender_options="-a $blender_options"
+			shift
+			;;
+		-f)
+			if [[ $2 =~ ^-?[0-9]+$ ]]; then
+				blender_options="-f $2"
+				shift
+				shift
+			else
+				echo "-f requires a number (positive or negative)"
+				exit 1
+			fi
+			;;
 		-o)
 			if [[ $2 == "" ]]; then
 				echo "You must provide an output path with the -o flag."
@@ -62,7 +76,7 @@ file_count=$(find $project_folder -maxdepth 1 -type f -name "*.blend" | wc -l)
 
 if [[ $file_count == 0 ]]; then
 	echo "No blend files were found in $project_folder."
-	exit 2
+	exit 1
 elif [[ $file_count == 1 ]]; then
 	echo "Found $file_count blend file"
 else
@@ -84,6 +98,8 @@ finished_rendering=false
 		project_file_no_ext=${project_file%.blend} # Name of project file without extension
 		output_folder="$output_dir/$project_file_no_ext"
 		find "$output_folder" -type f -size 0 -exec rm {} ';'
-		"$blender_executable" -b "$project_file_path" -o "$output_folder/$project_namme_no_ext" -a
+		echo "Path: $project_file_path"
+		echo "Options: $blender_options"
+		"$blender_executable" -b "$project_file_path" -o "$output_folder/$project_name_no_ext" $blender_options
 	done
 #done
