@@ -91,15 +91,13 @@ fi
 
 finished_rendering=false
 #while [[ $finished_rendering != true ]]; do
-	echo "Starting loop"
+	# Render all available
 	for project_file_path in "$project_folder"/*.blend; do
 		project_file=$(basename -- "$project_file_path") # Name of project file without path leading to it (has extension still)
 		echo "Now rendering $project_file"
 		project_file_no_ext=${project_file%.blend} # Name of project file without extension
 		output_folder="$output_dir/$project_file_no_ext"
-		find "$output_folder" -type f -size 0 -exec rm {} ';'
-		echo "Path: $project_file_path"
-		echo "Options: $blender_options"
+		find "$output_folder" -type f -size 0 -exec rm {} ';' > /dev/null
 		"$blender_executable" -b "$project_file_path" -o "$output_folder/$project_name_no_ext" $blender_options
 	done
 #done
