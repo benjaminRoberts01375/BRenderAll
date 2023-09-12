@@ -4,6 +4,7 @@ output_dir=""
 blender_options=""
 project_folder=""
 check_frames=true
+frames_subfolder_name="Rendered Frames"
 
 while (($#)); do
 	case $1 in
@@ -101,8 +102,8 @@ fi
 
 # Check if a specific output directory was passed
 if [[ -z $output_dir ]]; then
-	output_dir="$project_folder/Renders"
-	mkdir $output_dir -p
+	output_dir="$project_folder"/"$frames_subfolder_name"
+	mkdir "$output_dir" -p
 fi
 
 finished_rendering=false
